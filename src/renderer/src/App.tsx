@@ -5,10 +5,11 @@ import ApiKeyModal from './components/modals/ApiKeyModal'
 import NewProjectModal from './components/modals/NewProjectModal'
 import NodeLibraryModal from './components/modals/NodeLibraryModal'
 import ExportZJSModal from './components/modals/ExportZJSModal'
+import HeaderEditorModal from './components/modals/HeaderEditorModal'
 import { useApp } from './context/AppContext'
 
 function AppContent() {
-  const { showApiKeyModal, showNodeLibraryModal, showNewProjectModal, showExportModal } = useApp()
+  const { showApiKeyModal, showNodeLibraryModal, showNewProjectModal, showExportModal, showHeaderEditorModal } = useApp()
 
   return (
     <>
@@ -17,6 +18,7 @@ function AppContent() {
       {showNodeLibraryModal && <NodeLibraryModal />}
       {showNewProjectModal && <NewProjectModal />}
       {showExportModal && <ExportZJSModal />}
+      {showHeaderEditorModal && <HeaderEditorModal />}
     </>
   )
 }

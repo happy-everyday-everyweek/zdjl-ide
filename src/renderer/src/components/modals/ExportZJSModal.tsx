@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { useApp } from '../../context/AppContext'
-import { FiX, FiDownload, FiSettings } from 'react-icons/fi'
+import { FiX, FiDownload, FiSettings, FiEdit3 } from 'react-icons/fi'
 import { generateZJSContent, ExportOptions, countScriptActions } from '../../services/zjsExporter'
 import { ZJSHeader } from '../../types'
 
 const ExportZJSModal: React.FC = () => {
-  const { projectPath, projectInfo, openTabs, setShowExportModal, showExportModal } = useApp()
+  const { projectPath, projectInfo, openTabs, setShowExportModal, showExportModal, setShowHeaderEditorModal } = useApp()
   const [header, setHeader] = useState<Partial<ZJSHeader>>({})
   const [isExporting, setIsExporting] = useState(false)
   const [error, setError] = useState('')
@@ -127,7 +127,20 @@ const ExportZJSModal: React.FC = () => {
           </div>
 
           <div className="form-group">
-            <label className="form-label">脚本描述</label>
+            <label className="form-label">
+              脚本描述
+              <button 
+                className="edit-header-btn" 
+                style={{ marginLeft: 'auto', fontSize: '11px' }}
+                onClick={() => {
+                  setShowExportModal(false)
+                  setShowHeaderEditorModal(true)
+                }}
+                title="打开完整文件头编辑器"
+              >
+                <FiEdit3 /> 编辑更多选项
+              </button>
+            </label>
             <textarea
               className="input form-input textarea"
               value={header.description || ''}

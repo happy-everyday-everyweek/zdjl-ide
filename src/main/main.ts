@@ -95,6 +95,11 @@ function createMenu() {
           accelerator: 'CmdOrCtrl+E',
           click: () => mainWindow?.webContents.send('menu:export-zjs'),
         },
+        {
+          label: '编辑文件头',
+          accelerator: 'CmdOrCtrl+Shift+H',
+          click: () => mainWindow?.webContents.send('menu:header-editor'),
+        },
       ],
     },
     {
