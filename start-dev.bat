@@ -1,6 +1,5 @@
 @echo off
-chcp 65001 >nul
-setlocal enabledelayedexpansion
+chcp 65001 >nul 2>&1
 
 echo ========================================
 echo    自动精灵IDE 开发服务器启动脚本
@@ -9,84 +8,84 @@ echo.
 
 cd /d "%~dp0"
 
-echo [1/3] 检查依赖...
+echo [1/4] 检查 Node.js 和 npm...
+where npm >nul 2>&1
+if errorlevel 1 (
+    echo [X] 未找到 npm，请先安装 Node.js
+    echo     下载地址: https://nodejs.org/
+    goto :error
+)
+echo [√] npm 已安装
 
-set NEED_INSTALL=0
+echo.
+echo [2/4] 检查依赖...
 
 if not exist "node_modules" (
-    echo [!] 未检测到 node_modules 目录
-    set NEED_INSTALL=1
-) else (
-    echo [*] 检查核心依赖...
-    
-    if not exist "node_modules\react" (
-        echo [!] 缺少依赖: react
-        set NEED_INSTALL=1
-    )
-    if not exist "node_modules\react-dom" (
-        echo [!] 缺少依赖: react-dom
-        set NEED_INSTALL=1
-    )
-    if not exist "node_modules\electron" (
-        echo [!] 缺少依赖: electron
-        set NEED_INSTALL=1
-    )
-    if not exist "node_modules\vite" (
-        echo [!] 缺少依赖: vite
-        set NEED_INSTALL=1
-    )
-    if not exist "node_modules\typescript" (
-        echo [!] 缺少依赖: typescript
-        set NEED_INSTALL=1
-    )
-    if not exist "node_modules\monaco-editor" (
-        echo [!] 缺少依赖: monaco-editor
-        set NEED_INSTALL=1
-    )
-    if not exist "node_modules\@monaco-editor" (
-        echo [!] 缺少依赖: @monaco-editor/react
-        set NEED_INSTALL=1
-    )
-    if not exist "node_modules\concurrently" (
-        echo [!] 缺少依赖: concurrently
-        set NEED_INSTALL=1
-    )
-    if not exist "node_modules\jszip" (
-        echo [!] 缺少依赖: jszip
-        set NEED_INSTALL=1
-    )
-    if not exist "node_modules\electron-store" (
-        echo [!] 缺少依赖: electron-store
-        set NEED_INSTALL=1
-    )
-    if not exist "node_modules\react-icons" (
-        echo [!] 缺少依赖: react-icons
-        set NEED_INSTALL=1
-    )
+    echo [!] 未检测到 node_modules 目录，需要安装依赖
+    goto :install_deps
 )
 
-if "%NEED_INSTALL%"=="1" (
-    echo.
-    echo [!] 正在安装缺失的依赖...
-    call npm install
-    if errorlevel 1 (
-        echo [X] 依赖安装失败，请检查网络连接或 npm 配置
-        pause
-        exit /b 1
-    )
-    echo [√] 依赖安装完成
-) else (
-    echo [√] 所有依赖已存在，跳过安装
+echo [*] 检查核心依赖...
+set MISSING=0
+
+if not exist "node_modules\react" set MISSING=1
+if not exist "node_modules\react-dom" set MISSING=1
+if not exist "node_modules\electron" set MISSING=1
+if not exist "node_modules\vite" set MISSING=1
+if not exist "node_modules\typescript" set MISSING=1
+if not exist "node_modules\monaco-editor" set MISSING=1
+if not exist "node_modules\@monaco-editor" set MISSING=1
+if not exist "node_modules\concurrently" set MISSING=1
+if not exist "node_modules\jszip" set MISSING=1
+if not exist "node_modules\electron-store" set MISSING=1
+if not exist "node_modules\react-icons" set MISSING=1
+
+if "%MISSING%"=="1" (
+    echo [!] 检测到缺失的依赖
+    goto :install_deps
 )
 
-echo.
-echo [2/3] 启动开发服务器...
-echo [!] 服务器将在 http://localhost:3000 启动
-echo.
+echo [√] 所有依赖已存在
+goto :start_server
 
+:install_deps
+echo.
+echo [!] 正在安装依赖，请稍候...
+call npm install
+if errorlevel 1 (
+    echo [X] 依赖安装失败，请检查网络连接或 npm 配置
+    goto :error
+)
+echo [√] 依赖安装完成
+
+:start_server
+echo.
+echo [3/4] 打开浏览器...
 start "" "http://localhost:3000"
 
-echo [3/3] 正在启动...
-call npm run dev
+echo.
+echo [4/4] 启动开发服务器...
+echo [!] 按 Ctrl+C 可停止服务器
+echo.
 
+call npm run dev
+if errorlevel 1 (
+    echo [X] 启动失败
+    goto :error
+)
+
+echo.
+echo [√] 开发服务器已停止
+goto :end
+
+:error
+echo.
+echo ========================================
+echo [!] 发生错误，请查看上方信息
+echo ========================================
 pause
+exit /b 1
+
+:end
+pause
+exit /b 0
