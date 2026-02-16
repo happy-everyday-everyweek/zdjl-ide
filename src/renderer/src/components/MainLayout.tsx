@@ -5,7 +5,7 @@ import EditorArea from './EditorArea'
 import StatusBar from './StatusBar'
 import WelcomeScreen from './WelcomeScreen'
 import AIPanel from './AIPanel'
-import { FiChevronLeft, FiChevronRight, FiMessageCircle } from 'react-icons/fi'
+import { FiChevronRight, FiMessageCircle } from 'react-icons/fi'
 
 const MainLayout: React.FC = () => {
   const { projectPath } = useApp()

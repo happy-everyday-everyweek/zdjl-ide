@@ -1,6 +1,6 @@
 import React from 'react'
 import { useApp } from '../context/AppContext'
-import { FiFolder, FiSettings, FiGithub } from 'react-icons/fi'
+import { FiFolder } from 'react-icons/fi'
 
 const StatusBar: React.FC = () => {
   const { projectPath, projectInfo, openTabs, activeTabId, settings } = useApp()

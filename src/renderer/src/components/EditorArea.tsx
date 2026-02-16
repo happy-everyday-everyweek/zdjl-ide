@@ -1,4 +1,4 @@
-import React, { useRef, useState, useCallback, useEffect } from 'react'
+import React, { useRef, useState } from 'react'
 import Editor from '@monaco-editor/react'
 import { useApp } from '../context/AppContext'
 import { FiX, FiCircle } from 'react-icons/fi'
@@ -9,8 +9,7 @@ import { checkCodeErrors, CodeError } from '../services/errorChecker'
 import ErrorPanel from './ErrorPanel'
 import { 
   CoordinateHoverPanel, 
-  ColorHoverPanel, 
-  SwipeCoordinateHoverPanel 
+  ColorHoverPanel
 } from './HoverPanels'
 import {
   analyzeContext,
@@ -50,7 +49,6 @@ const EditorArea: React.FC = () => {
   const [showNodePanel, setShowNodePanel] = useState(false)
   const [nodePanelPosition, setNodePanelPosition] = useState({ x: 0, y: 0 })
   const [nodeFilter, setNodeFilter] = useState('')
-  const [currentNodeParam, setCurrentNodeParam] = useState('')
   const [hoverInfo, setHoverInfo] = useState<HoverInfo | null>(null)
   const [isAILoading, setIsAILoading] = useState(false)
   const [aiCompletionCache, setAiCompletionCache] = useState<Map<string, AICompletionResult[]>>(new Map())
@@ -213,6 +211,7 @@ const EditorArea: React.FC = () => {
       },
     })
 
+    const model = editor.getModel()
     registerHoverProviderForCoordinatesAndColors(monaco, model, editor)
 
     editor.onDidChangeModelContent(() => {
@@ -225,7 +224,6 @@ const EditorArea: React.FC = () => {
       
       const nodeParamMatch = textBeforeCursor.match(/node:\s*["']?([^"'\s]*)$/)
       if (nodeParamMatch) {
-        setCurrentNodeParam(nodeParamMatch[1] || '')
         setNodeFilter(nodeParamMatch[1] || '')
         const editorPosition = editor.getScrolledVisiblePosition(position)
         if (editorPosition) {
@@ -391,9 +389,6 @@ const EditorArea: React.FC = () => {
     const model = editor.getModel()
     if (!model) return
 
-    const lineContent = model.getLineContent(error.line)
-    const originalText = lineContent.substring(error.column - 1, error.endColumn - 1)
-
     editor.executeEdits('error-fixer', [{
       range: {
         startLineNumber: error.line,
@@ -417,7 +412,7 @@ const EditorArea: React.FC = () => {
       const lines = text.split('\n')
       const newDecorations: any[] = []
 
-      lines.forEach((line, lineIndex) => {
+      lines.forEach((line: string, lineIndex: number) => {
         const coords = extractCoordinates(line)
         coords.forEach(coord => {
           newDecorations.push({
