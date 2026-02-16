@@ -308,10 +308,10 @@ export const NodeHoverPanel: React.FC<NodeHoverPanelProps> = ({
           )}
         </div>
 
-        {data.description && (
+        {(data.description || data.desc) && (
           <div className="node-hover-section">
             <div className="node-hover-label">节点描述</div>
-            <div className="node-hover-value">{data.description}</div>
+            <div className="node-hover-value">{data.description || data.desc}</div>
           </div>
         )}
       </div>
