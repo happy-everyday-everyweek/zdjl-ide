@@ -239,10 +239,17 @@ export const NodeHoverPanel: React.FC<NodeHoverPanelProps> = ({
           </div>
         )}
 
-        {data.nodeName && (
+        {data.idResName && (
           <div className="node-hover-section">
-            <div className="node-hover-label">节点名称</div>
-            <div className="node-hover-value">{data.nodeName}</div>
+            <div className="node-hover-label">节点ID</div>
+            <div className="node-hover-value">{data.idResName}</div>
+          </div>
+        )}
+
+        {data.className && (
+          <div className="node-hover-section">
+            <div className="node-hover-label">节点类名</div>
+            <div className="node-hover-value">{data.className}</div>
           </div>
         )}
 
@@ -253,17 +260,24 @@ export const NodeHoverPanel: React.FC<NodeHoverPanelProps> = ({
           </div>
         )}
 
-        {data.className && (
+        {data.depth !== undefined && (
           <div className="node-hover-section">
-            <div className="node-hover-label">类名</div>
-            <div className="node-hover-value">{data.className}</div>
+            <div className="node-hover-label">节点深度</div>
+            <div className="node-hover-value">{data.depth}</div>
           </div>
         )}
 
-        {data.idResName && (
+        {data.index !== undefined && (
           <div className="node-hover-section">
-            <div className="node-hover-label">ID资源名</div>
-            <div className="node-hover-value">{data.idResName}</div>
+            <div className="node-hover-label">匹配第几</div>
+            <div className="node-hover-value">{data.index}</div>
+          </div>
+        )}
+
+        {data.limitArea && (
+          <div className="node-hover-section">
+            <div className="node-hover-label">限制区域</div>
+            <div className="node-hover-value">{typeof data.limitArea === 'object' ? JSON.stringify(data.limitArea) : data.limitArea}</div>
           </div>
         )}
 
@@ -294,30 +308,9 @@ export const NodeHoverPanel: React.FC<NodeHoverPanelProps> = ({
           )}
         </div>
 
-        {data.depth !== undefined && (
-          <div className="node-hover-section">
-            <div className="node-hover-label">节点层级</div>
-            <div className="node-hover-value">第 {data.depth} 层</div>
-          </div>
-        )}
-
-        {data.index !== undefined && (
-          <div className="node-hover-section">
-            <div className="node-hover-label">同级索引</div>
-            <div className="node-hover-value">{data.index}</div>
-          </div>
-        )}
-
-        {data.children && Array.isArray(data.children) && data.children.length > 0 && (
-          <div className="node-hover-section">
-            <div className="node-hover-label">子节点</div>
-            <div className="node-hover-value">{data.children.length} 个子节点</div>
-          </div>
-        )}
-
         {data.description && (
           <div className="node-hover-section">
-            <div className="node-hover-label">描述</div>
+            <div className="node-hover-label">节点描述</div>
             <div className="node-hover-value">{data.description}</div>
           </div>
         )}
