@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react'
-import { FiCrosshair, FiDroplet, FiCheck, FiX, FiMove } from 'react-icons/fi'
+import React, { useState, useEffect, useRef } from 'react'
+import { FiCrosshair, FiDroplet, FiCheck, FiX, FiMove, FiInfo, FiBook } from 'react-icons/fi'
 import { parseColor, rgbToHex } from '../services/aiCompletion'
+import { NodeLibraryItem } from '../types'
 
 interface CoordinateHoverPanelProps {
   x: string
@@ -187,6 +188,214 @@ export const CoordinateHoverPanel: React.FC<CoordinateHoverPanelProps> = ({
           </button>
         </div>
       </div>
+    </div>
+  )
+}
+
+interface NodeHoverPanelProps {
+  nodeName: string
+  position: { x: number; y: number }
+  nodeData: NodeLibraryItem | null
+  onClose: () => void
+  onInsert: (nodeName: string) => void
+}
+
+export const NodeHoverPanel: React.FC<NodeHoverPanelProps> = ({
+  nodeName,
+  position,
+  nodeData,
+  onClose,
+  onInsert,
+}) => {
+  const panelRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (panelRef.current && !panelRef.current.contains(e.target as Node)) {
+        onClose()
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [onClose])
+
+  const renderNodeData = () => {
+    if (!nodeData || !nodeData.data) {
+      return (
+        <div className="node-hover-empty">
+          <FiInfo />
+          <span>未找到节点数据</span>
+          <p className="node-hover-hint">节点 "{nodeName}" 未在节点库中找到</p>
+        </div>
+      )
+    }
+
+    const data = nodeData.data
+
+    return (
+      <div className="node-hover-content">
+        <div className="node-hover-section">
+          <div className="node-hover-label">
+            <FiBook /> 节点名称
+          </div>
+          <div className="node-hover-value">{data.nodeName || nodeData.name}</div>
+        </div>
+
+        {data.description && (
+          <div className="node-hover-section">
+            <div className="node-hover-label">描述</div>
+            <div className="node-hover-value">{data.description}</div>
+          </div>
+        )}
+
+        {data.inputProperties && (
+          <div className="node-hover-section">
+            <div className="node-hover-label">输入属性</div>
+            <div className="node-hover-properties">
+              {Array.isArray(data.inputProperties) ? (
+                data.inputProperties.map((prop: any, index: number) => (
+                  <div key={index} className="node-hover-property">
+                    <span className="property-name">{prop.name}</span>
+                    <span className="property-type">{prop.type}</span>
+                    {prop.description && (
+                      <span className="property-desc">{prop.description}</span>
+                    )}
+                  </div>
+                ))
+              ) : (
+                <pre className="property-json">{JSON.stringify(data.inputProperties, null, 2)}</pre>
+              )}
+            </div>
+          </div>
+        )}
+
+        {data.outputProperties && (
+          <div className="node-hover-section">
+            <div className="node-hover-label">输出属性</div>
+            <div className="node-hover-properties">
+              {Array.isArray(data.outputProperties) ? (
+                data.outputProperties.map((prop: any, index: number) => (
+                  <div key={index} className="node-hover-property">
+                    <span className="property-name">{prop.name}</span>
+                    <span className="property-type">{prop.type}</span>
+                  </div>
+                ))
+              ) : (
+                <pre className="property-json">{JSON.stringify(data.outputProperties, null, 2)}</pre>
+              )}
+            </div>
+          </div>
+        )}
+
+        {data.action && (
+          <div className="node-hover-section">
+            <div className="node-hover-label">动作</div>
+            <pre className="node-hover-code">{JSON.stringify(data.action, null, 2)}</pre>
+          </div>
+        )}
+
+        {data.condition && (
+          <div className="node-hover-section">
+            <div className="node-hover-label">条件</div>
+            <pre className="node-hover-code">{JSON.stringify(data.condition, null, 2)}</pre>
+          </div>
+        )}
+
+        {data.fields && (
+          <div className="node-hover-section">
+            <div className="node-hover-label">字段</div>
+            <div className="node-hover-properties">
+              {Object.entries(data.fields).map(([key, value]: [string, any]) => (
+                <div key={key} className="node-hover-property">
+                  <span className="property-name">{key}</span>
+                  <span className="property-value">{String(value)}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {data.properties && (
+          <div className="node-hover-section">
+            <div className="node-hover-label">属性</div>
+            <div className="node-hover-properties">
+              {Object.entries(data.properties).map(([key, value]: [string, any]) => (
+                <div key={key} className="node-hover-property">
+                  <span className="property-name">{key}</span>
+                  <span className="property-value">{String(value)}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {data.relatedDocs && Array.isArray(data.relatedDocs) && (
+          <div className="node-hover-section">
+            <div className="node-hover-label">相关文档</div>
+            <div className="node-hover-docs">
+              {data.relatedDocs.map((doc: string, index: number) => (
+                <div key={index} className="node-hover-doc">{doc}</div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {data.customFields && Array.isArray(data.customFields) && (
+          <div className="node-hover-section">
+            <div className="node-hover-label">自定义字段</div>
+            <div className="node-hover-properties">
+              {data.customFields.map((field: any, index: number) => (
+                <div key={index} className="node-hover-property">
+                  <span className="property-name">{field.name || field.fieldName}</span>
+                  <span className="property-type">{field.type}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {data.Example && (
+          <div className="node-hover-section">
+            <div className="node-hover-label">示例</div>
+            <pre className="node-hover-code">{data.Example}</pre>
+          </div>
+        )}
+
+        {data.examples && Array.isArray(data.examples) && (
+          <div className="node-hover-section">
+            <div className="node-hover-label">示例</div>
+            {data.examples.map((example: string, index: number) => (
+              <pre key={index} className="node-hover-code">{example}</pre>
+            ))}
+          </div>
+        )}
+
+        <div className="node-hover-actions">
+          <button className="btn btn-primary btn-sm" onClick={() => onInsert(nodeName)}>
+            插入节点
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div
+      ref={panelRef}
+      className="hover-panel node-panel"
+      style={{
+        left: position.x,
+        top: position.y,
+      }}
+    >
+      <div className="hover-panel-header">
+        <FiInfo />
+        <span>节点详情</span>
+        <button className="hover-panel-close" onClick={onClose}>
+          <FiX />
+        </button>
+      </div>
+      {renderNodeData()}
     </div>
   )
 }

@@ -1442,6 +1442,155 @@ select.input {
   color: var(--text-primary);
 }
 
+.node-panel {
+  max-width: 400px;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.node-panel .hover-panel-content {
+  padding: 10px;
+}
+
+.node-hover-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.node-hover-empty svg {
+  font-size: 32px;
+  margin-bottom: 10px;
+  color: var(--warning-color);
+}
+
+.node-hover-hint {
+  font-size: 12px;
+  margin-top: 8px;
+  opacity: 0.7;
+}
+
+.node-hover-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.node-hover-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.node-hover-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.node-hover-label svg {
+  color: var(--accent-color);
+  font-size: 12px;
+}
+
+.node-hover-value {
+  font-size: 14px;
+  color: var(--text-primary);
+  word-break: break-word;
+}
+
+.node-hover-properties {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.node-hover-property {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  background: var(--bg-tertiary);
+  border-radius: 4px;
+  font-size: 12px;
+  flex-wrap: wrap;
+}
+
+.property-name {
+  color: var(--success-color);
+  font-family: monospace;
+}
+
+.property-type {
+  color: var(--warning-color);
+  font-family: monospace;
+  font-size: 11px;
+}
+
+.property-desc {
+  color: var(--text-secondary);
+  font-size: 11px;
+  width: 100%;
+}
+
+.property-value {
+  color: var(--text-primary);
+}
+
+.property-json {
+  background: var(--bg-tertiary);
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  overflow-x: auto;
+  color: var(--text-primary);
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.node-hover-code {
+  background: var(--bg-primary);
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  overflow-x: auto;
+  color: var(--success-color);
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.node-hover-docs {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.node-hover-doc {
+  padding: 4px 8px;
+  background: var(--bg-tertiary);
+  border-radius: 4px;
+  font-size: 12px;
+  color: var(--accent-color);
+  cursor: pointer;
+}
+
+.node-hover-doc:hover {
+  background: var(--bg-hover);
+}
+
+.node-hover-actions {
+  margin-top: 8px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-color);
+}
+
 .coordinate-highlight {
   background: rgba(0, 120, 212, 0.2);
   border-bottom: 1px dashed var(--accent-color);

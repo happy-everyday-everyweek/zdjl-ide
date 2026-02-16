@@ -9,7 +9,8 @@ import { checkCodeErrors, CodeError } from '../services/errorChecker'
 import ErrorPanel from './ErrorPanel'
 import { 
   CoordinateHoverPanel, 
-  ColorHoverPanel
+  ColorHoverPanel,
+  NodeHoverPanel
 } from './HoverPanels'
 import {
   analyzeContext,
@@ -22,7 +23,7 @@ import {
 } from '../services/aiCompletion'
 
 interface HoverInfo {
-  type: 'coordinate' | 'color' | 'swipe'
+  type: 'coordinate' | 'color' | 'node'
   position: { x: number; y: number }
   data: any
   range: { startColumn: number; endColumn: number; lineNumber: number }
@@ -304,6 +305,37 @@ const EditorArea: React.FC = () => {
         }
       }
 
+      const nodeMatch = lineContent.match(/node:\s*["']([^"']+)["']/)
+      if (nodeMatch) {
+        const nodeName = nodeMatch[1]
+        const nodeStartIndex = lineContent.indexOf(nodeMatch[0]) + nodeMatch[0].indexOf(nodeName)
+        const nodeEndIndex = nodeStartIndex + nodeName.length
+        
+        if (position.column >= nodeStartIndex + 1 && position.column <= nodeEndIndex + 1) {
+          const allNodes = getAllNodes()
+          const matchedNode = allNodes.find(n => n.name === nodeName)
+          
+          const editorPos = editor.getScrolledVisiblePosition(position)
+          if (editorPos) {
+            const layoutInfo = editor.getLayoutInfo()
+            setHoverInfo({
+              type: 'node',
+              position: {
+                x: editorPos.left + layoutInfo.contentLeft,
+                y: editorPos.top + 20,
+              },
+              data: { nodeName, nodeData: matchedNode || null },
+              range: {
+                startColumn: nodeStartIndex + 1,
+                endColumn: nodeEndIndex + 1,
+                lineNumber: position.lineNumber,
+              },
+            })
+          }
+          return
+        }
+      }
+
       setHoverInfo(null)
     })
 
@@ -542,6 +574,35 @@ const EditorArea: React.FC = () => {
     setHoverInfo(null)
   }
 
+  const handleNodeInsert = (nodeName: string) => {
+    if (!editorRef.current) return
+    
+    const editor = editorRef.current
+    const model = editor.getModel()
+    const position = editor.getPosition()
+    if (!model || !position) return
+
+    const lineContent = model.getLineContent(position.lineNumber)
+    const nodeMatch = lineContent.match(/node:\s*["']([^"']+)["']/)
+    
+    if (nodeMatch) {
+      const startColumn = lineContent.indexOf(nodeMatch[1]) + 1
+      const endColumn = startColumn + nodeMatch[1].length
+      
+      editor.executeEdits('', [{
+        range: {
+          startLineNumber: position.lineNumber,
+          endLineNumber: position.lineNumber,
+          startColumn,
+          endColumn,
+        },
+        text: nodeName,
+      }])
+    }
+    
+    setHoverInfo(null)
+  }
+
   const getAllNodes = (): NodeLibraryItem[] => {
     const allNodes: NodeLibraryItem[] = []
     nodeLibraries.forEach(lib => {
@@ -641,6 +702,15 @@ const EditorArea: React.FC = () => {
                 position={hoverInfo.position}
                 onApply={handleColorApply}
                 onClose={() => setHoverInfo(null)}
+              />
+            )}
+            {hoverInfo && hoverInfo.type === 'node' && (
+              <NodeHoverPanel
+                nodeName={hoverInfo.data.nodeName}
+                nodeData={hoverInfo.data.nodeData}
+                position={hoverInfo.position}
+                onClose={() => setHoverInfo(null)}
+                onInsert={handleNodeInsert}
               />
             )}
             {isAILoading && (
