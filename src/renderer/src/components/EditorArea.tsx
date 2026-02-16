@@ -64,7 +64,7 @@ const EditorArea: React.FC = () => {
     monacoRef.current = monaco
 
     monaco.languages.registerCompletionItemProvider('javascript', {
-      triggerCharacters: ['.', ' ', '(', ',', '\n'],
+      triggerCharacters: ['.', ' ', '(', ',', '\n', ':'],
       provideCompletionItems: async (model: any, position: any, context: any) => {
         const word = model.getWordUntilPosition(position)
         const range = {
@@ -105,6 +105,33 @@ const EditorArea: React.FC = () => {
             sortText: `0_${hint.name}`,
           }))
           suggestions.push(...zdjlSuggestions)
+        }
+
+        const nodeMatch = textBeforeCursor.match(/node:\s*["']?([^"'\s]*)$/)
+        if (nodeMatch) {
+          const nodeFilter = nodeMatch[1] || ''
+          const allNodes = getAllNodes()
+          const filteredNodes = allNodes.filter(node => 
+            node.name.toLowerCase().includes(nodeFilter.toLowerCase()) ||
+            (node.data?.text || '').toLowerCase().includes(nodeFilter.toLowerCase()) ||
+            (node.data?.desc || '').toLowerCase().includes(nodeFilter.toLowerCase())
+          )
+          
+          filteredNodes.forEach(node => {
+            const nodeText = node.data?.text || node.name
+            suggestions.push({
+              label: {
+                label: nodeText,
+                description: '📦 节点',
+              },
+              kind: monaco.languages.CompletionItemKind.Variable,
+              insertText: `"${nodeText}"`,
+              documentation: node.data?.desc || node.description || '',
+              detail: `ID: ${node.data?.idResName || '-'} | 类名: ${node.data?.className || '-'}`,
+              range,
+              sortText: '1_node',
+            })
+          })
         }
 
         const analysis = analyzeContext(completionContext)

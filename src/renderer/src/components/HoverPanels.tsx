@@ -267,10 +267,10 @@ export const NodeHoverPanel: React.FC<NodeHoverPanelProps> = ({
           </div>
         )}
 
-        {data.index !== undefined && (
+        {data.indexNum !== undefined && (
           <div className="node-hover-section">
             <div className="node-hover-label">匹配第几</div>
-            <div className="node-hover-value">{data.index}</div>
+            <div className="node-hover-value">{data.indexNum}</div>
           </div>
         )}
 
