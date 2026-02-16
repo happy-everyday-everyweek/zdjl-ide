@@ -574,35 +574,6 @@ const EditorArea: React.FC = () => {
     setHoverInfo(null)
   }
 
-  const handleNodeInsert = (nodeName: string) => {
-    if (!editorRef.current) return
-    
-    const editor = editorRef.current
-    const model = editor.getModel()
-    const position = editor.getPosition()
-    if (!model || !position) return
-
-    const lineContent = model.getLineContent(position.lineNumber)
-    const nodeMatch = lineContent.match(/node:\s*["']([^"']+)["']/)
-    
-    if (nodeMatch) {
-      const startColumn = lineContent.indexOf(nodeMatch[1]) + 1
-      const endColumn = startColumn + nodeMatch[1].length
-      
-      editor.executeEdits('', [{
-        range: {
-          startLineNumber: position.lineNumber,
-          endLineNumber: position.lineNumber,
-          startColumn,
-          endColumn,
-        },
-        text: nodeName,
-      }])
-    }
-    
-    setHoverInfo(null)
-  }
-
   const getAllNodes = (): NodeLibraryItem[] => {
     const allNodes: NodeLibraryItem[] = []
     nodeLibraries.forEach(lib => {
@@ -710,7 +681,6 @@ const EditorArea: React.FC = () => {
                 nodeData={hoverInfo.data.nodeData}
                 position={hoverInfo.position}
                 onClose={() => setHoverInfo(null)}
-                onInsert={handleNodeInsert}
               />
             )}
             {isAILoading && (

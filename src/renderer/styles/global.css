@@ -1443,8 +1443,8 @@ select.input {
 }
 
 .node-panel {
-  max-width: 400px;
-  max-height: 500px;
+  max-width: 320px;
+  max-height: 400px;
   overflow-y: auto;
 }
 
@@ -1476,119 +1476,52 @@ select.input {
 .node-hover-content {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .node-hover-section {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
 
 .node-hover-label {
-  display: flex;
-  align-items: center;
-  gap: 6px;
   font-size: 11px;
   text-transform: uppercase;
   color: var(--text-secondary);
   font-weight: 500;
 }
 
-.node-hover-label svg {
-  color: var(--accent-color);
-  font-size: 12px;
-}
-
 .node-hover-value {
-  font-size: 14px;
+  font-size: 13px;
   color: var(--text-primary);
   word-break: break-word;
 }
 
-.node-hover-properties {
-  display: flex;
-  flex-direction: column;
+.node-position-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: 6px;
 }
 
-.node-hover-property {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 8px;
-  background: var(--bg-tertiary);
-  border-radius: 4px;
-  font-size: 12px;
-  flex-wrap: wrap;
-}
-
-.property-name {
-  color: var(--success-color);
-  font-family: monospace;
-}
-
-.property-type {
-  color: var(--warning-color);
-  font-family: monospace;
-  font-size: 11px;
-}
-
-.property-desc {
-  color: var(--text-secondary);
-  font-size: 11px;
-  width: 100%;
-}
-
-.property-value {
-  color: var(--text-primary);
-}
-
-.property-json {
-  background: var(--bg-tertiary);
-  padding: 8px;
-  border-radius: 4px;
-  font-size: 11px;
-  overflow-x: auto;
-  color: var(--text-primary);
-  white-space: pre-wrap;
-  word-break: break-all;
-}
-
-.node-hover-code {
-  background: var(--bg-primary);
-  padding: 8px;
-  border-radius: 4px;
-  font-size: 11px;
-  overflow-x: auto;
-  color: var(--success-color);
-  white-space: pre-wrap;
-  word-break: break-all;
-}
-
-.node-hover-docs {
+.position-item {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-}
-
-.node-hover-doc {
-  padding: 4px 8px;
+  align-items: center;
+  padding: 6px;
   background: var(--bg-tertiary);
   border-radius: 4px;
-  font-size: 12px;
+}
+
+.position-label {
+  font-size: 10px;
+  color: var(--text-secondary);
+}
+
+.position-value {
+  font-size: 13px;
   color: var(--accent-color);
-  cursor: pointer;
-}
-
-.node-hover-doc:hover {
-  background: var(--bg-hover);
-}
-
-.node-hover-actions {
-  margin-top: 8px;
-  padding-top: 10px;
-  border-top: 1px solid var(--border-color);
+  font-weight: 500;
 }
 
 .coordinate-highlight {
