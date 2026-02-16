@@ -14,7 +14,7 @@ const ExportZJSModal: React.FC = () => {
 
   useEffect(() => {
     const loadHeader = async () => {
-      if (projectPath) {
+      if (projectPath && window.electronAPI) {
         const result = await window.electronAPI.fs.readFile(`${projectPath}/Information/header.json`)
         if (result.success && result.content) {
           try {
@@ -31,7 +31,7 @@ const ExportZJSModal: React.FC = () => {
   if (!showExportModal) return null
 
   const handleExport = async () => {
-    if (!projectPath || !mainTab) {
+    if (!projectPath || !mainTab || !window.electronAPI) {
       setError('没有可导出的内容')
       return
     }

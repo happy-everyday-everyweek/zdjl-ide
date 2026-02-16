@@ -13,7 +13,9 @@ const ApiKeyModal: React.FC = () => {
       return
     }
     
-    await window.electronAPI.store.set('apiKey', apiKey.trim())
+    if (window.electronAPI) {
+      await window.electronAPI.store.set('apiKey', apiKey.trim())
+    }
     updateSettings({ apiKey: apiKey.trim() })
     setShowApiKeyModal(false)
   }

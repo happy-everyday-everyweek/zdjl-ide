@@ -11,6 +11,7 @@ const NewProjectModal: React.FC = () => {
   const [isCreating, setIsCreating] = useState(false)
 
   const handleBrowse = async () => {
+    if (!window.electronAPI) return
     const path = await window.electronAPI.dialog.openDirectory()
     if (path) {
       setProjectPathLocal(path)
@@ -24,6 +25,10 @@ const NewProjectModal: React.FC = () => {
     }
     if (!projectPath.trim()) {
       setError('请选择项目位置')
+      return
+    }
+    if (!window.electronAPI) {
+      setError('Electron API 不可用')
       return
     }
 

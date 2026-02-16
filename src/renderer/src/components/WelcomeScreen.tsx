@@ -6,6 +6,7 @@ const WelcomeScreen: React.FC = () => {
   const { setShowNewProjectModal, setProjectPath, setShowApiKeyModal } = useApp()
 
   const handleOpenProject = async () => {
+    if (!window.electronAPI) return
     const path = await window.electronAPI.dialog.openDirectory()
     if (path) {
       setProjectPath(path)

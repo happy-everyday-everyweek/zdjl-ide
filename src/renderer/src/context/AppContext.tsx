@@ -78,12 +78,15 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   })
 
   useEffect(() => {
-    loadSettings()
-    loadNodeLibraries()
-    setupMenuListeners()
+    if (window.electronAPI) {
+      loadSettings()
+      loadNodeLibraries()
+      setupMenuListeners()
+    }
   }, [])
 
   const loadSettings = async () => {
+    if (!window.electronAPI) return
     try {
       const settings = await window.electronAPI.store.get('settings')
       if (settings) {
@@ -99,6 +102,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }
 
   const loadNodeLibraries = async () => {
+    if (!window.electronAPI) return
     try {
       const libraries = await window.electronAPI.store.get('nodeLibraries')
       if (libraries && Array.isArray(libraries)) {
@@ -110,6 +114,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }
 
   const setupMenuListeners = () => {
+    if (!window.electronAPI) return
     window.electronAPI.on('menu:new-project', () => {
       setState(prev => ({ ...prev, showNewProjectModal: true }))
     })
@@ -143,6 +148,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }
 
   const openProject = async (path: string) => {
+    if (!window.electronAPI) return
     setState(prev => ({ ...prev, isLoading: true, projectPath: path }))
     try {
       const projectInfoPath = `${path}/Information/project.json`
@@ -182,6 +188,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }
 
   const buildFileTree = async (dirPath: string): Promise<FileTreeItem[]> => {
+    if (!window.electronAPI) return []
     const result = await window.electronAPI.fs.readDir(dirPath)
     if (!result.success || !result.files) return []
     
@@ -211,6 +218,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }
 
   const openFile = async (path: string, name: string) => {
+    if (!window.electronAPI) return
     const existingTab = state.openTabs.find(tab => tab.path === path)
     if (existingTab) {
       setState(prev => ({ ...prev, activeTabId: existingTab.id }))
@@ -271,6 +279,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }
 
   const saveCurrentTab = async () => {
+    if (!window.electronAPI) return
     const activeTab = state.openTabs.find(tab => tab.id === state.activeTabId)
     if (!activeTab || !activeTab.isDirty) return
     await window.electronAPI.fs.writeFile(activeTab.path, activeTab.content)
@@ -283,6 +292,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }
 
   const saveAllTabs = async () => {
+    if (!window.electronAPI) return
     for (const tab of state.openTabs.filter(t => t.isDirty)) {
       await window.electronAPI.fs.writeFile(tab.path, tab.content)
     }
@@ -293,6 +303,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }
 
   const createNewFile = async (parentPath: string, name: string, isDirectory: boolean) => {
+    if (!window.electronAPI) return
     const fullPath = `${parentPath}/${name}`
     if (isDirectory) {
       await window.electronAPI.fs.mkdir(fullPath)
@@ -308,19 +319,25 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const addNodeLibrary = async (library: NodeLibrary) => {
     const newLibraries = [...state.nodeLibraries.filter(l => l.id !== library.id), library]
     setState(prev => ({ ...prev, nodeLibraries: newLibraries }))
-    await window.electronAPI.store.set('nodeLibraries', newLibraries)
+    if (window.electronAPI) {
+      await window.electronAPI.store.set('nodeLibraries', newLibraries)
+    }
   }
 
   const removeNodeLibrary = async (id: string) => {
     const newLibraries = state.nodeLibraries.filter(l => l.id !== id)
     setState(prev => ({ ...prev, nodeLibraries: newLibraries }))
-    await window.electronAPI.store.set('nodeLibraries', newLibraries)
+    if (window.electronAPI) {
+      await window.electronAPI.store.set('nodeLibraries', newLibraries)
+    }
   }
 
   const updateSettings = async (settings: Partial<AppSettings>) => {
     const newSettings = { ...state.settings, ...settings }
     setState(prev => ({ ...prev, settings: newSettings }))
-    await window.electronAPI.store.set('settings', newSettings)
+    if (window.electronAPI) {
+      await window.electronAPI.store.set('settings', newSettings)
+    }
   }
 
   const setShowApiKeyModal = (show: boolean) => {

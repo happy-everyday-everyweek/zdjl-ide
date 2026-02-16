@@ -14,7 +14,7 @@ const HeaderEditorModal: React.FC = () => {
 
   useEffect(() => {
     const loadHeader = async () => {
-      if (projectPath && showHeaderEditorModal) {
+      if (projectPath && showHeaderEditorModal && window.electronAPI) {
         const result = await window.electronAPI.fs.readFile(`${projectPath}/Information/header.json`)
         if (result.success && result.content) {
           try {
@@ -42,7 +42,7 @@ const HeaderEditorModal: React.FC = () => {
   }
 
   const handleSave = async () => {
-    if (!projectPath) return
+    if (!projectPath || !window.electronAPI) return
     
     setIsSaving(true)
     try {
